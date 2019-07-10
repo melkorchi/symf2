@@ -1,0 +1,36 @@
+Symfony 2.7.48
+**************
+
+Stack (symfony 2.7.48 / php 7.1.9 / composer 1.5.2)
+
+Dans ce framework tout est bundle (paquet, brique...), l'application, les composants externes et même la distribution standard.
+
+Un bundle peut servir à tout. On écrira les nôtres pour y inclure notre code métier.
+Bundles notables:
+	+ FosUserBundle: il fournit une gestion d'utilisateur complète (inscription, connexion, mdp perdu...)
+	+ SonataAdminBundle: il génère facilement les pages de l'interface d'administration à partir du modèle de données  
+	  utilisé.
+	+ FosRestBundle: il simplifie la mise en oeuvre d'API REST dans les applications
+	+ KnpPaginatorBundle: il simplifie et uniformise la gestion des tris et de la pagination des données sous toutes leurs formes.
+
+NB: Sources de bundles http://knpbundles.com/
+
+Un bundle vit en autonomie
+On doit penser un bundle de manière totalement autonome et on doit le configurer dans l'application pour le faire fonctionner avec les autres.
+Implication: 2 bundles ne peuvent partager des classes ou des informations...
+
+Création d'un bundle: php app/console generate:bundle
+
+Résolution des problèmes
+************************
+
+Problème relatif aux bundles (err: Attemp to load class  ... kernel)
+--------------------------------------------------------------------
+Dans composer.json: "": "/src"
+puis composer dump-autoload et composer install
+
+"AppBundle\\": "src/AppBundle",
+"TechCorpFrontBundle\\": "src/TechCorp/FrontBundle",
+
+Problème relatif aux routes (Not route found for ...)
+----------------------------------------------------

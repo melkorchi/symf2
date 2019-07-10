@@ -1,0 +1,11 @@
+sdz_blog:
+    resource: "@SdzBlogBundle/Resources/config/routing.yml"
+    prefix:   /sdz
+
+tech_corp_front:
+    resource: "@TechCorpFrontBundle/Resources/config/routing.yml"
+    prefix:   /tech
+
+# app:
+#     resource: '@AppBundle/Controller/'
+#     type: annotation
