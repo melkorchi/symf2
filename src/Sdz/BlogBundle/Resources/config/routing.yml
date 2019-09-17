@@ -1,3 +1,60 @@
+# symfony-2.7\my_project_name\src\Sdz\BlogBundle\Resources\config\routing.yml
+# Routes test
 sdz_blog_homepage:
-    path: /hello/{name}
+    path: /hello
     defaults: { _controller: SdzBlogBundle:Default:index }
+
+sdz_blog_helloworld:
+    path: /hello_world/{id}
+    defaults: { _controller: SdzBlogBundle:Blog:hello }
+
+sdz_blog_byebyeworld:
+    path: /byebye_world
+    defaults: { _controller: SdzBlogBundle:Blog:bye }
+# Fin routes test
+
+# Routes utilisées dans le BLog
+sdz_blog_home:
+    # pattern: /blog
+    pattern: /{page}
+    defaults: { _controller: SdzBlogBundle:Blog:index, page: 1 }
+    requirements:
+        page: \d*
+
+sdz_blog_view:
+    # pattern: /blog/article/{id}
+    pattern: /view/article/{id}
+    defaults: { _controller: SdzBlogBundle:Blog:view }
+    requirements:
+        id: \d*
+
+sdz_blog_add:
+    # pattern: /blog/add
+    pattern: /add
+    defaults: { _controller: SdzBlogBundle:Blog:add }
+
+sdz_blog_addViewTest:
+    pattern: /add/test/{id}
+    defaults: { _controller: SdzBlogBundle:Blog:addViewTest }
+    requirements:
+        id: \d+
+
+sdz_blog_edit:
+    # pattern: /blog/edit
+    pattern: /edit/article/{id}
+    defaults: { _controller: SdzBlogBundle:Blog:edit }
+    requirements:
+        id: \d+
+
+sdz_blog_remove:
+    # pattern: /blog/remove
+    pattern: /remove/article/{id}
+    defaults: { _controller: SdzBlogBundle:Blog:remove }
+    requirements:
+        id: \d+
+
+sdz_blog_test:
+    pattern: /test/{param}
+    defaults: { _controller: SdzBlogBundle:Blog:test }
+    requirements:
+        param: \d+

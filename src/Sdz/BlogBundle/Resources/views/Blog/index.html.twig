@@ -1,0 +1,87 @@
+{# <!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <title>Index</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <h2>Index... {{app}} created by {{author}}</h2>
+    <p>Page : {{ page is empty ? 'root' : page }}</p>
+    <p>Webmaster: {{ webmaster }}</p>
+    <p>Variable globale: {{ globalVar }}</p>
+
+    {% 
+        set tab = {
+            1:{option: '1', value: 'tea...'},
+            2:{option: '2', value: 'coffee...'},
+            3:{option: '3', value: 'juice...'}
+        }
+    %}
+    {%
+        set var = 'foo'
+    %}
+    {% if var is defined %}
+        <p>var is defined</p>
+    {% else %}
+        <p>var is not defined</p>
+    {% endif %}
+    {% if var is empty %}
+        <p>var is empty</p>
+    {% else %}
+        <p>var is not empty</p>
+    {% endif %}
+    <ul>
+    {% for item in tab %}
+        <li>{{ loop.length }} itérations au total, {{ item.option }} - {{ item.value }} - {{  loop.revindex0  }}</li>
+         {% if loop.index is even %}pair{% else %}impair{% endif %}
+         {% if loop.index is odd %}impair{% else %}pair{% endif %}
+    {% endfor %}
+    </ul>
+</body
+
+</html> #}
+
+{# Utilisation de l'héritage #}
+{% extends "SdzBlogBundle::blog/layout.html.twig" %}
+
+{% block title %}{{ parent() }} - index{% endblock %}
+
+{% block content %}
+    {# {{ parent() }} #}
+    <h2>Index... {{app}} created by {{author}}</h2>
+    <p>Page : {{ page is empty ? 'root' : page }}</p>
+    <p>Webmaster: {{ webmaster }}</p>
+    <p>Variable globale: {{ globalVar }}</p>
+
+    {% 
+        set tab = {
+            1:{option: '1', value: 'tea...'},
+            2:{option: '2', value: 'coffee...'},
+            3:{option: '3', value: 'juice...'}
+        }
+    %}
+    {%
+        set var = 'foo'
+    %}
+    {% if var is defined %}
+        <p>var is defined</p>
+    {% else %}
+        <p>var is not defined</p>
+    {% endif %}
+    {% if var is empty %}
+        <p>var is empty</p>
+    {% else %}
+        <p>var is not empty</p>
+    {% endif %}
+    <ul>
+    {% for item in tab %}
+        <li>{{ loop.length }} itérations au total, {{ item.option }} - {{ item.value }} - {{  loop.revindex0  }}</li>
+         {% if loop.index is even %}pair{% else %}impair{% endif %}
+         {% if loop.index is odd %}impair{% else %}pair{% endif %}
+    {% endfor %}
+    </ul>
+{% endblock %}
