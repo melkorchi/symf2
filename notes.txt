@@ -21,6 +21,11 @@ Implication: 2 bundles ne peuvent partager des classes ou des informations...
 
 Création d'un bundle: php app/console generate:bundle
 
+Fichier de mapping (nomDuBundle/Resource/config/routing.yml) -> définition des routes...
+Une route fait la correspondance entre une URL et un contrôleur à appeler.
+
+Le profiler -> géré par le webProfilerBundle (possède ses propres routes)
+
 Résolution des problèmes
 ************************
 
@@ -34,3 +39,13 @@ puis composer dump-autoload et composer install
 
 Problème relatif aux routes (Not route found for ...)
 ----------------------------------------------------
+"No route found for "GET /dsz/hello"
+Il manquait le renseignement du paramètre name...
+
+Revolute ... alias adresse mail
+
+Vider le cache 
+manuellement -> delete folder app/cache/dev
+sinon php app\console cache:clear (en prod on ajoute --env=prod)
+
+

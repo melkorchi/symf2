@@ -1,6 +1,8 @@
+# symfony-2.7\my_project_name\app\config\routing.yml
 sdz_blog:
     resource: "@SdzBlogBundle/Resources/config/routing.yml"
-    prefix:   /sdz
+    # prefix:   /sdz/blog
+    prefix:   /blog
 
 tech_corp_front:
     resource: "@TechCorpFrontBundle/Resources/config/routing.yml"

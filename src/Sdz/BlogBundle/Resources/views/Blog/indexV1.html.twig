@@ -1,0 +1,20 @@
+<html>
+<head>
+<title>Index</title>
+</head>
+<body>
+<h1>Index... {{app}} created by {{author}}</h1>
+<p>
+    url: {{ url }}
+    <br>
+    urlAbsolue: {{ urlAbsolue }}
+    <br>
+    Page : {{ page is empty ? 'root' : page }}
+</p>
+
+<a href="{{ path('sdz_blog_view', {'id': 19}) }}">Voir Article</a>
+<br>
+<a href="{{ path('sdz_blog_add') }}">Ajouter Article</a>
+
+</body>
+</html>
