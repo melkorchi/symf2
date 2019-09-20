@@ -1,9 +1,24 @@
-<!DOCTYPE html> 
-<html>  
-    <head>    
-        <title>Lecture de l'article {{ id }}</title>  
-    </head>  
-    <body>    
-        <h1>View Article n°{{ id }} !</h1>  
-    </body> 
-</html>
+{# Template final view.html.twig #}
+
+{% extends "SdzBlogBundle::blog/layout.html.twig" %}
+
+{% block title %}
+    View Article - {{ parent() }}
+{% endblock %}
+
+{% block sdzblog_body %}
+    <h2>{{ article.title }}</h2>
+     <i>Par {{ article.author }}, le {{ article.date|date('d/m/Y') }}</i>  
+     <div class="well">{{ article.content }}</div>  
+     <p>
+        <a href="{{ path('sdz_blog_home') }}" class="btn">      
+            <i class="icon-chevron-left"></i>Retour à la liste    
+        </a>    
+        <a href="{{ path('sdz_blog_edit', {'id': article.id}) }}" class="btn">      
+            <i class="icon-edit"></i>Modifier l'article    
+        </a>    
+        <a href="{{ path('sdz_blog_remove', {'id': article.id}) }}" class="btn">      
+            <i class="icon-trash"></i>Supprimer l'article
+        </a>
+    </p> 
+{% endblock %}

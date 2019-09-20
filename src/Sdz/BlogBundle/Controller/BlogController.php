@@ -13,136 +13,24 @@ class BlogController extends Controller
             throw $this->createNotFoundException('Page inexistante (page = '.$page.')');
         } 
 
-        // $aData = array(
-        //     'app' => 'Blog',
-        //     'author' => 'Mek',
-        //     'page' => $page
-        // );
-
-        // $precedent = 200;
-        // $reel = 100;
-        // variation -> -50 %
-
-        // $precedent = 100;
-        // $reel = 200;
-        // variation -> +100 %
-
-        // $precedent = -200;
-        // $reel = -100;
-        // variation -> 50 %
-
-        // $precedent = -100;
-        // $reel = -200;
-        // variation -> -100 %
-
-        // $precedent = -200;
-        // $reel = 100;
-        // variation -> +150 %
-
-        // $precedent = 200;
-        // $reel = -100;
-        // variation -> -150 %
-
-        // $signe = intval(($reel * $precedent > 0 && $reel < 0) ? '-1' : '1');
-        // $signe = intval(($reel * $precedent < 0 && $reel > $precedent) ? '-1' : '1');
-
-        // $variation = (($reel -$precedent) / $precedent) * 100 * $signe;
-
-        // $rez = array(
-        //     'precedent' => $precedent,
-        //     'reel' => $reel,
-        //     'signe' => $signe,
-        //     'variation' => $variation
-        // );
-
-        // dump($rez);die();
-
-        // Test rendu fichier text
-        // $content = $this->renderView('SdzBlogBundle:Blog:email.txt.twig', array(
-        //     'pseudo' => 'Mek',
-        //     'company' => 'Logimek'
-        // ));
-        // dump($content);die;
-
-        // Test reg exp
-        // dump($this->cecleFinanceRegExp());die();
-
         $articles = [
             [
             'id' => 1,
-            'title' => 'First article',
+            'title' => 'Symfony 2.7, framework php',
             'author' => 'Mek',
+            'content' => 'Vital de connaître ce framework, il est utilisé chez Bourse Direct. Actuellement la migration vers la version 3.4 est en cours...',
             'date' => new \Datetime()
             ],
             [
             'id' => 2,
-            'title' => 'Second article',
+            'title' => 'CSS3, Less',
             'author' => 'Mek',
+            'content' => 'Vital de manipuler ces langages pour devenir autonome...',
             'date' => new \Datetime()
             ]
         ];
         
-        // return $this->render('SdzBlogBundle:Blog:index.html.twig', $aData);
         return $this->render('SdzBlogBundle:Blog:index.html.twig', ['articles' => $articles]);
-    }
-
-    private function cecleFinanceRegExp() {
-        // Expression régulière
-        // $str = '123 milliers$';
-        // $str = '1 millier de barils';
-        // $str = '2.000 Mds$';
-        // $str = '2,3 MlsE';
-        // $str = '0,13 Ml';
-        // $str = '1.000,3 Mls$';
-        // $str = '-3,2%';
-        $str = '+2,00%';
-        // $str = '1.999.250 Mds$';
-        // $str = '0,954 Md$';
-        // $str = "100.500,25";
-        // $str = "100.500,25$";
-
-        // dump($str);
-
-        if (preg_match("#milliers?#", $str)) {
-            $q = trim(preg_split("#milliers?#", $str)[0]);
-            $u = (!empty(preg_split("#milliers?#", $str)[1])) ? trim(preg_split("#milliers?#", $str)[1]) : "none";
-            $m = 1000;
-        } elseif (preg_match("#Mls?#", $str)) {
-            $q = trim(preg_split("#Mls?#", $str)[0]);
-            $u = (!empty(preg_split("#Mls?#", $str)[1])) ? trim(preg_split("#Mls?#", $str)[1]) : "none";
-            $m = 1000000;
-        } elseif (preg_match("#Mds?#", $str)) {
-            $q = trim(preg_split("#Mds?#", $str)[0]);
-            $u = (!empty(preg_split("#Mds?#", $str)[1])) ? trim(preg_split("#Mds?#", $str)[1]) : "none";
-            $m = 1000000000;
-        } elseif (preg_match("#%$#", $str)) {
-            // variation, pourcentage
-            $q = trim(preg_split("#%$#", $str)[0]);
-            $u = "%";
-            $m = 1;
-        } else {
-            // Nombre
-            $q = $str;
-            $u = "none";
-            $m = 1;
-        }
-
-        // Traitement du float
-        $q1 = str_replace('.', '', $q);
-        $q1 = str_replace(',', '.', $q1);
-        $q1 = (float) $q1;
-        $q1 = $m * $q1;
-
-        // Traitement Baril de pétrole
-        if (preg_match("#de barils#", $u)) {
-            $u = "barils";
-        }
-
-        return array(
-            'strInput' => $str,
-            'float' => $q1,
-            'unite' => $u
-        );
     }
 
     public function menuAction($number) 
@@ -161,7 +49,15 @@ class BlogController extends Controller
 
     public function viewAction($id)
     {
-        return $this->render('SdzBlogBundle:Blog:view.html.twig', ['id' => $id]);
+        $article = [
+            'id' => 1,
+            'title' => 'Symfony 2.7, framework php',
+            'author' => 'Mek',
+            'content' => 'Vital de connaître ce framework, il est utilisé chez Bourse Direct. Actuellement la migration vers la version 3.4 est en cours...',
+            'date' => new \Datetime()
+        ];
+
+        return $this->render('SdzBlogBundle:Blog:view.html.twig', ['article' => $article]);
     }
 
     public function addAction()
