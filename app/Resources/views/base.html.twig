@@ -27,7 +27,6 @@
                     <li><a href="{{ path('sdz_blog_home') }}">Accueil du blog</a></li> 
                     <li><a href="{{ path('sdz_blog_add') }}">Ajouter un article</a></li>   
                 </ul>                              
-                {# {% render(controller("SdzBlogBundle:Blog:menu")) with {'number': 3} %} #}
                 {% render(controller("SdzBlogBundle:Blog:menu", {'number': 3})) %}        
             </div>        
             <div id="content" class="span9">          
