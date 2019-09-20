@@ -13,11 +13,11 @@ class BlogController extends Controller
             throw $this->createNotFoundException('Page inexistante (page = '.$page.')');
         } 
 
-        $aData = array(
-            'app' => 'Blog',
-            'author' => 'Mek',
-            'page' => $page
-        );
+        // $aData = array(
+        //     'app' => 'Blog',
+        //     'author' => 'Mek',
+        //     'page' => $page
+        // );
 
         // $precedent = 200;
         // $reel = 100;
@@ -67,8 +67,23 @@ class BlogController extends Controller
         // Test reg exp
         // dump($this->cecleFinanceRegExp());die();
 
+        $articles = [
+            [
+            'id' => 1,
+            'title' => 'First article',
+            'author' => 'Mek',
+            'date' => new \Datetime()
+            ],
+            [
+            'id' => 2,
+            'title' => 'Second article',
+            'author' => 'Mek',
+            'date' => new \Datetime()
+            ]
+        ];
         
-        return $this->render('SdzBlogBundle:Blog:index.html.twig', $aData);
+        // return $this->render('SdzBlogBundle:Blog:index.html.twig', $aData);
+        return $this->render('SdzBlogBundle:Blog:index.html.twig', ['articles' => $articles]);
     }
 
     private function cecleFinanceRegExp() {
@@ -130,22 +145,23 @@ class BlogController extends Controller
         );
     }
 
-    public function menuAction() 
+    public function menuAction($number) 
     {
-        $lastArticlesList = array(
-            array('id' => 2, 'title' => 'Mon dernier week-end'),
-            array('id' => 4, 'title' => 'Sortie de Symfony 2.1'),
-            array('id' => 6, 'title' => 'Extentions Twig')
-        );
+        $lastArticlesList = [
+            ['id' => 3, 'title' => 'Symfony 2.7'],
+            ['id' => 4, 'title' => 'Twig, moteur de template'],
+            ['id' => 5, 'title' => 'HTML5'],
+            ['id' => 6, 'title' => 'ECMA Script'],
+            // ['id' => 7, 'title' => 'VueJs'],
+            // ['id' => 8, 'title' => 'Angular'],
+        ];
 
-        // return new Response('testor');
-
-        return $this->render('blog/menu.html.twig', array('list'=> $lastArticlesList));
+        return $this->render('blog/menu.html.twig', ['list'=> $lastArticlesList]);
     }
 
     public function viewAction($id)
     {
-        return $this->render('SdzBlogBundle:Blog:view.html.twig', array('id' => $id));
+        return $this->render('SdzBlogBundle:Blog:view.html.twig', ['id' => $id]);
     }
 
     public function addAction()
@@ -155,7 +171,7 @@ class BlogController extends Controller
             // Message flash
             $this->get('session')->getFlashBag()->add('notice', 'Article bien enregistré');
             // Redirection vers la page de visualisation de l'article
-            return $this->redirect($this->generateUrl('sdz_blog_view', array('id' => 19)));
+            return $this->redirect($this->generateUrl('sdz_blog_view', ['id' => 19]));
         }
 
         // Affichage du formulaire d'ajout d'article
@@ -164,12 +180,12 @@ class BlogController extends Controller
 
     public function editAction($id)
     {
-        return $this->render('SdzBlogBundle:Blog:edit.html.twig', array('id' => $id));
+        return $this->render('SdzBlogBundle:Blog:edit.html.twig', ['id' => $id]);
     }
 
     public function removeAction($id)
     {
-        return $this->render('SdzBlogBundle:Blog:remove.html.twig', array('id' => $id));
+        return $this->render('SdzBlogBundle:Blog:remove.html.twig', ['id' => $id]);
     }
 
 }

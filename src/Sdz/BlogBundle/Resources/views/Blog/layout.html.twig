@@ -1,28 +1,18 @@
-{# <!DOCTYPE html>
-<html lang="fr">
-
-<head>
-    <title>
-        {% block title %}Sdz Blog{% endblock %}
-    </title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="css/style.css" rel="stylesheet">
-</head>
-
-<body>
-    {% block body %}{% endblock %}
-</body>
-
-</html> #}
+{# layout du bundle #}
 
 {% extends "::base.html.twig"%}
 
-{% block title %} {{ parent() }} - Sdz Blog {% endblock %}
-{# 
-{% block menu %}   
-{% endblock %} #}
+{% block title %} Blog - {{ parent() }} {% endblock %}
 
-{% block content %}
-    
-{% endblock %}
+{% block body %}
+
+    {# Sous-titres commun à toutes les pages du bundle #}
+    <h1>Blog</h1>
+
+    <hr>
+
+    {# Nouveau block implémentable par les vues du bundle #}
+    {% block sdzblog_body %}
+    {% endblock %}
+
+{% endblock %} 
