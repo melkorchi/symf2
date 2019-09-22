@@ -4,6 +4,7 @@ namespace Sdz\BlogBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Sdz\BlogBundle\Entity\Article;
 
 class BlogController extends Controller
 {
@@ -62,12 +63,27 @@ class BlogController extends Controller
 
     public function addAction()
     {
+        // Ajouter un article...
+        $article = new Article();
+        $article->setTitle('Mon week-end du 22, chapitre 3')
+                ->setAuthor('Mek')
+                ->setContent('Don\'t give up the fight!');
+        
+        $em = $this->getDoctrine()->getManager();
+
+        // Petite mise à jour
+        $article2 = $em->getRepository('SdzBlogBundle:Article')->find(1);
+        $article2->setContent('Al hamdoulillah 3ala Kouli \'hal');
+
+        $em->persist($article);
+        $em->flush();
+
         if ($this->get('request')->getMethod() == 'POST') {
             // Traitement du formulaire, persister les datas en base
             // Message flash
             $this->get('session')->getFlashBag()->add('notice', 'Article bien enregistré');
             // Redirection vers la page de visualisation de l'article
-            return $this->redirect($this->generateUrl('sdz_blog_view', ['id' => 19]));
+            return $this->redirect($this->generateUrl('sdz_blog_view', ['id' => $article->getId()]));
         }
 
         // Affichage du formulaire d'ajout d'article
@@ -76,6 +92,9 @@ class BlogController extends Controller
 
     public function editAction($id)
     {
+        // Récupération de l'article d'id = $id
+        // Création et gestion du formulaire
+
         return $this->render('SdzBlogBundle:Blog:edit.html.twig', ['id' => $id]);
     }
 

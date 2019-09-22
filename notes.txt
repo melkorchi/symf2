@@ -48,4 +48,34 @@ Vider le cache
 manuellement -> delete folder app/cache/dev
 sinon php app\console cache:clear (en prod on ajoute --env=prod)
 
+SwiftMailer dépendance envoi de mail
+
+php app/console doctrine:generate:entity
+	-> génération d'une entité
+php app/console doctrine:database:create
+	-> créer la database
+php app/console doctrine:schema:update --dump-sql
+	-> requête sql du différentiel entre la base et les entités
+php app/console doctrine:schema:update --force
+	-> exécute la dite requête
+
+php app/console doctrine:generate:entities SdzBlogBundle:Article
+	-> modification d'une entité
+	-> génère les getters et les setters
+
+Le service Doctrine 2
+	$doctrine = $this->get('doctrine');
+		ou
+	$doctrine = $this->getDoctrine();
+
+Le service EntityManager
+	$em = $this->getDoctrine()->getManager();
+		ou
+	$em = $this->get('doctrine.orm.entity_manager');
+
+Les services Repository
+	$em = $this->getDoctrine()->getManager();
+	$repositoryArticle = $em->getRepository('SdzBlogBundle:Article');
+		ou
+	$repositoryArticle = $em->getRepository('Sdz\BlogBundle\Entity\Article');	
 
