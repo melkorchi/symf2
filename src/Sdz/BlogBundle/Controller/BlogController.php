@@ -14,22 +14,26 @@ class BlogController extends Controller
             throw $this->createNotFoundException('Page inexistante (page = '.$page.')');
         } 
 
-        $articles = [
-            [
-            'id' => 1,
-            'title' => 'Symfony 2.7, framework php',
-            'author' => 'Mek',
-            'content' => 'Vital de connaître ce framework, il est utilisé chez Bourse Direct. Actuellement la migration vers la version 3.4 est en cours...',
-            'date' => new \Datetime()
-            ],
-            [
-            'id' => 2,
-            'title' => 'CSS3, Less',
-            'author' => 'Mek',
-            'content' => 'Vital de manipuler ces langages pour devenir autonome...',
-            'date' => new \Datetime()
-            ]
-        ];
+        // $articles = [
+        //     [
+        //     'id' => 1,
+        //     'title' => 'Symfony 2.7, framework php',
+        //     'author' => 'Mek',
+        //     'content' => 'Vital de connaître ce framework, il est utilisé chez Bourse Direct. Actuellement la migration vers la version 3.4 est en cours...',
+        //     'date' => new \Datetime()
+        //     ],
+        //     [
+        //     'id' => 2,
+        //     'title' => 'CSS3, Less',
+        //     'author' => 'Mek',
+        //     'content' => 'Vital de manipuler ces langages pour devenir autonome...',
+        //     'date' => new \Datetime()
+        //     ]
+        // ];
+
+        $em = $this->getDoctrine()->getManager();
+        $repository = $em->getRepository('SdzBlogBundle:Article');
+        $articles = $repository->findAll();
         
         return $this->render('SdzBlogBundle:Blog:index.html.twig', ['articles' => $articles]);
     }
@@ -38,11 +42,11 @@ class BlogController extends Controller
     {
         $lastArticlesList = [
             ['id' => 3, 'title' => 'Symfony 2.7'],
-            ['id' => 4, 'title' => 'Twig, moteur de template'],
+            ['id' => 4, 'title' => 'Twig'],
             ['id' => 5, 'title' => 'HTML5'],
             ['id' => 6, 'title' => 'ECMA Script'],
-            // ['id' => 7, 'title' => 'VueJs'],
-            // ['id' => 8, 'title' => 'Angular'],
+            ['id' => 7, 'title' => 'VueJs'],
+            ['id' => 8, 'title' => 'Angular']
         ];
 
         return $this->render('blog/menu.html.twig', ['list'=> $lastArticlesList]);
@@ -50,13 +54,14 @@ class BlogController extends Controller
 
     public function viewAction($id)
     {
-        $article = [
-            'id' => 1,
-            'title' => 'Symfony 2.7, framework php',
-            'author' => 'Mek',
-            'content' => 'Vital de connaître ce framework, il est utilisé chez Bourse Direct. Actuellement la migration vers la version 3.4 est en cours...',
-            'date' => new \Datetime()
-        ];
+        $em = $this->getDoctrine()->getManager();
+        $repository = $em->getRepository('SdzBlogBundle:Article');
+
+        $article = $repository->find($id);
+
+        if (null === $article) {
+            throw $this->createNotFoundException('Article[id='.$id.'] inexistant');
+        }
 
         return $this->render('SdzBlogBundle:Blog:view.html.twig', ['article' => $article]);
     }
