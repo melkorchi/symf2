@@ -78,4 +78,111 @@ Les services Repository
 	$repositoryArticle = $em->getRepository('SdzBlogBundle:Article');
 		ou
 	$repositoryArticle = $em->getRepository('Sdz\BlogBundle\Entity\Article');	
+	Ex: $article = $repositoryArticle->find($id)
+
+Les autres méthodes utiles de l'EntityManger EM ($em->method())
+	- clear(): annule tous les persist effectués
+	- detach(entity): annule le persist sur l'entité passée en argument
+	- contains(entity): retourne true si l'entité passée en argument est gérée par l'EM, i;e, si un persist est en cours
+	- refresh(entity): met à jour l'entité passée en argument dans l'état où elle est en DB
+	- remove(entity): supprime l'entité passée en argument de la DB
+
+Rq: Syntaxe possible sans passer par le Repository
+	Ex: $article = $em->find('SdzBlogBundle:Article', $id)
+
+***************************************************
+*** Les relations entre entités avec Doctrine 2 ***
+***************************************************
+
+Relations OneToOne, OneToMany et ManyToMany
+Dans une relation entre 2 entités, il y a toujours une entité propriétaire et une entité inverse.
+L'entité propriétaire est celle qui contient la référence à l'autre entité.
+
+Ex: 2 entités, Article et Commentaire.
+Un commentaire est rattaché à un article, l'entité Commentaire doit donc contenir la référence à l'entité Article. [En DB, dans la table commentaire, on aura une colonne article_id]
+
+Relation unidirectionnelle et bidirectionnelle.
+	+ unidirectionnelle, on pourra faire 
+		$entityProprietaire->getEntityInverse() mais pas $entityInverse->getEntityProprietaire()
+		Ex: $commentaire->getArticle() mais pas $article->getCommentaires()
+	+ bidirectionnelle on peut faire 
+		$entityProprietaire->getEntityInverse() et $entityInverse->getEntityProprietaire()
+NB: $article->getCommentaires() implique une requête SQL
+	Lorque l'on récupère un article, Doctrine ne récupère pas toutes les entités qui lui sont liées (les commentaires par ex). HEUREUSEMENT !!!
+	Lourdeur !!! On veut récupérer un article pour son titre et Doctrine nous récupère les 54 commentaires qui en plus sont reliés à leurs 54 auteurs respectifs etc ...
+	Pour remédier à cela, Doctrine utilise le Lazy Loading (chargement fainéant) : il va charger les entités à l'autre bout de la relation que si on veut accéder à ces entités. Typiquement c'est au moment où l'on fait $article->getCommentaires() que Doctrine va charger les commentaires via une nouvelle requête SQL...
+	
+	1) Relation ONE-TO-ONE
+		Un article est associé à une seule image 
+		Une image n'est reliée qu'à un seul article
+		Entité propriétaire Article (le choix est arbitraire mais plus logique)
+
+		
+
+	2) Relation MANY-TO-ONE
+		Un article est associé à plusieurs commentaires
+		Un commentaire concerne un seul article
+		Entité propriétaire Commentaire et Aritcle entité inverse
+
+	3) Relation MANY-TO-MANY
+		Un article peut appartenir à plusieurs catégories
+		Une catégorie peut contenir plusieurs articles
+
+		Entité propriétaire sera Article et donc l'entité inverse Categorie
+		L'entité Article contient un attribut categories au pluriel destiné à contenir une liste d'objet...
+		Les listes d'objets dans Doctrine 2 ne sont de simples tableaux, mais des ArrayCollection... possédant toutes les propriétés des tableaux (foreach, count, ...) mais possédant quelques méthodes supplémentaires utiles.
+
+		Installation du bundle relatif aux fixtures
+
+		composer cheatsheet
+
+		"require": {
+			"vendor/package": "1.3.2", // exactly 1.3.2 (exact)
+
+			// >, <, >=, <= | specify upper / lower bounds
+			"vendor/package": ">=1.3.2", // anything above or equal to 1.3.2
+			"vendor/package": "<1.3.2", // anything below 1.3.2
+
+			// * | wildcard
+			"vendor/package": "1.3.*", // >=1.3.0 <1.4.0
+
+			// ~ | allows last digit specified to go up
+			"vendor/package": "~1.3.2", // >=1.3.2 <1.4.0
+			"vendor/package": "~1.3", // >=1.3.0 <2.0.0
+
+			// ^ | doesn't allow breaking changes (major version fixed - following semvar)
+			"vendor/package": "^1.3.2", // >=1.3.2 <2.0.0
+			"vendor/package": "^0.3.2", // >=0.3.2 <0.4.0 // except if major version is 0
+		}
+
+		Erreur mémoire allouée composer
+			-> php -r "eval('?>'.file_get_contents('http://getcomposer.org/installer'));" Réinstallation
+
+		Composer 1.9.0 version
+
+		php -d memory_limit=-1 composer.phar update (résoud le pb...)
+
+		Créer les répertoires DataFixtures\ORM et le fihcier C:\refacto\20190611\symfony-2.7\my_project_name\src\Sdz\BlogBundle\DataFixtures\ORM\Categories.php
+
+		Exécuter la commande php app/console doctrine:fixtures:load 
+			-- purge la base de données (efface toutes les données)
+			on peut éviter cela, en faisant [ php app/console doctrine:fixtures:load --append ]
+
+	4) Relation ManyToMany avec attributs
+
+	L'astuce est de créer une entité intermédiaire et de créer 2 relation de type ManyToOne
+	ex: Article [OneToMany] Article_Competence [ManyToOne] Competence
+	L'entité intermédiaire sera porteuse de l'attribut level[Niveau] (de compétence en fonction de l'artilce)
+	L'entité ArticleCompetence n'aura pas d'auto-incrément, l'id sera forgé avec les idArticle et les idCompetence (couple unique). Pour cela il faudra ajouter l'annotation @ORM\Id sur les colonnes article et competence.
+	NB -> l'entité propriétaire dans les deux relations ManyToOne est l'entité ArticleCompetence [côté Many], donc on ne pourra pas faire des choses comme:
+		- $article->getArticleCompetence()
+		- $competence->getArticleCompetence()
+		=> il faudra considérer les relations bidirectionnelles...
+	
+	Utilisation des fixtures pour alimenter la table Competence
+	Idem que Categorie, création du Fichier Competences.php ds répertoire DataFixtures\ORM
+
+
+	
+
 
