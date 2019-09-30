@@ -1,0 +1,38 @@
+<?php 
+
+namespace Sdz\BlogBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Sdz\BlogBundle\Entity\ArticleCompetence
+ * 
+ * @ORM\Entity
+ */
+class ArticleCompetence
+{
+    /**
+     * @var Sdz\BlogBundle\Entity\Article $article
+     * 
+     * @ORM\Id
+     * @ORM\ManyToOne(targetEntity="Sdz\BlogBundle\Entity\Article")
+     */
+    private $article;
+
+    /**
+     * @var Sdz\BlogBundle\Entity\Competence $competence
+     * 
+     * @ORM\Id
+     * @ORM\ManyToOne(targetEntity="Sdz\BlogBundle\Entity\Competence")
+     */
+    private $competence;
+
+    /**
+     * @var string $level
+     * 
+     * @ORM\Column(name="level", type="string", length=255)
+     */
+    private $level;
+}
+
+?>

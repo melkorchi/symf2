@@ -1,7 +1,9 @@
-<ul>
+<h3>Les derniers articles</h3>
+
+<ul class="nav nav-pills nav-stacked">
     {% for article in list %}
         <li>
-            <a href="">{{ article.title }}</a>
+            <a href="{{ path('sdz_blog_view', {'id':article.id}) }}">{{ article.title }}</a>
         </li>
     {% endfor %}
 </ul>

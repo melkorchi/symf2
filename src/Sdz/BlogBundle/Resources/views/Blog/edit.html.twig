@@ -1,26 +1,21 @@
-{# <!DOCTYPE html>
-<html lang="fr">
+{# Template final edit.html.twig #}
 
-<head>
-    <title>Edit Article</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="css/style.css" rel="stylesheet">
-</head>
-
-<body>
-
-</body>
-
-</html> #}
-
-{# {% extends "::base.html.twig" %} #}
 {% extends "SdzBlogBundle::blog/layout.html.twig" %}
 
-{% block title %} {{ parent() }} - edition d'article {% endblock %}
+{% block title %} Edit Article - {{ parent() }}  {% endblock %}
 
-{% block body %}
-    <h2>Edition d'article</h2>
+{% block sdzblog_body %}
+
+    <h2>Edition d'un article</h2>
+
     {% include("SdzBlogBundle:Blog:form.html.twig") %}
+
+    <p>
+        Vous éditez un article déjà existant, ne le changer pas trop pour éviter aux membres de ne pas comprendre ce qu'il se passe.
+    </p>
+
+    <p>
+        <a href="" class="btn"><i class="icon-chevron-left"></i>Retour à l'article</a>
+    </p>
 
 {% endblock %}

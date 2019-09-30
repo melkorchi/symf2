@@ -33,12 +33,6 @@ sdz_blog_add:
     pattern: /add
     defaults: { _controller: SdzBlogBundle:Blog:add }
 
-sdz_blog_addViewTest:
-    pattern: /add/test/{id}
-    defaults: { _controller: SdzBlogBundle:Blog:addViewTest }
-    requirements:
-        id: \d+
-
 sdz_blog_edit:
     # pattern: /blog/edit
     pattern: /edit/article/{id}

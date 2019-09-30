@@ -4,6 +4,12 @@ namespace Sdz\BlogBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Sdz\BlogBundle\Entity\Article;
+use Sdz\BlogBundle\Entity\ArticleCompetence;
+use Sdz\BlogBundle\Entity\Categorie;
+use Sdz\BlogBundle\Entity\Commentaire;
+use Sdz\BlogBundle\Entity\Competence;
+use Sdz\BlogBundle\Entity\Image;
 
 class BlogController extends Controller
 {
@@ -13,149 +19,116 @@ class BlogController extends Controller
             throw $this->createNotFoundException('Page inexistante (page = '.$page.')');
         } 
 
-        $aData = array(
-            'app' => 'Blog',
-            'author' => 'Mek',
-            'page' => $page
-        );
-
-        // $precedent = 200;
-        // $reel = 100;
-        // variation -> -50 %
-
-        // $precedent = 100;
-        // $reel = 200;
-        // variation -> +100 %
-
-        // $precedent = -200;
-        // $reel = -100;
-        // variation -> 50 %
-
-        // $precedent = -100;
-        // $reel = -200;
-        // variation -> -100 %
-
-        // $precedent = -200;
-        // $reel = 100;
-        // variation -> +150 %
-
-        // $precedent = 200;
-        // $reel = -100;
-        // variation -> -150 %
-
-        // $signe = intval(($reel * $precedent > 0 && $reel < 0) ? '-1' : '1');
-        // $signe = intval(($reel * $precedent < 0 && $reel > $precedent) ? '-1' : '1');
-
-        // $variation = (($reel -$precedent) / $precedent) * 100 * $signe;
-
-        // $rez = array(
-        //     'precedent' => $precedent,
-        //     'reel' => $reel,
-        //     'signe' => $signe,
-        //     'variation' => $variation
-        // );
-
-        // dump($rez);die();
-
-        // Test rendu fichier text
-        // $content = $this->renderView('SdzBlogBundle:Blog:email.txt.twig', array(
-        //     'pseudo' => 'Mek',
-        //     'company' => 'Logimek'
-        // ));
-        // dump($content);die;
-
-        // Test reg exp
-        // dump($this->cecleFinanceRegExp());die();
-
+        $em = $this->getDoctrine()->getManager();
+        $repository = $em->getRepository('SdzBlogBundle:Article');
+        $articles = $repository->findAll();
         
-        return $this->render('SdzBlogBundle:Blog:index.html.twig', $aData);
+        return $this->render('SdzBlogBundle:Blog:index.html.twig', ['articles' => $articles]);
     }
 
-    private function cecleFinanceRegExp() {
-        // Expression régulière
-        // $str = '123 milliers$';
-        // $str = '1 millier de barils';
-        // $str = '2.000 Mds$';
-        // $str = '2,3 MlsE';
-        // $str = '0,13 Ml';
-        // $str = '1.000,3 Mls$';
-        // $str = '-3,2%';
-        $str = '+2,00%';
-        // $str = '1.999.250 Mds$';
-        // $str = '0,954 Md$';
-        // $str = "100.500,25";
-        // $str = "100.500,25$";
-
-        // dump($str);
-
-        if (preg_match("#milliers?#", $str)) {
-            $q = trim(preg_split("#milliers?#", $str)[0]);
-            $u = (!empty(preg_split("#milliers?#", $str)[1])) ? trim(preg_split("#milliers?#", $str)[1]) : "none";
-            $m = 1000;
-        } elseif (preg_match("#Mls?#", $str)) {
-            $q = trim(preg_split("#Mls?#", $str)[0]);
-            $u = (!empty(preg_split("#Mls?#", $str)[1])) ? trim(preg_split("#Mls?#", $str)[1]) : "none";
-            $m = 1000000;
-        } elseif (preg_match("#Mds?#", $str)) {
-            $q = trim(preg_split("#Mds?#", $str)[0]);
-            $u = (!empty(preg_split("#Mds?#", $str)[1])) ? trim(preg_split("#Mds?#", $str)[1]) : "none";
-            $m = 1000000000;
-        } elseif (preg_match("#%$#", $str)) {
-            // variation, pourcentage
-            $q = trim(preg_split("#%$#", $str)[0]);
-            $u = "%";
-            $m = 1;
-        } else {
-            // Nombre
-            $q = $str;
-            $u = "none";
-            $m = 1;
-        }
-
-        // Traitement du float
-        $q1 = str_replace('.', '', $q);
-        $q1 = str_replace(',', '.', $q1);
-        $q1 = (float) $q1;
-        $q1 = $m * $q1;
-
-        // Traitement Baril de pétrole
-        if (preg_match("#de barils#", $u)) {
-            $u = "barils";
-        }
-
-        return array(
-            'strInput' => $str,
-            'float' => $q1,
-            'unite' => $u
-        );
-    }
-
-    public function menuAction() 
+    public function menuAction($number) 
     {
-        $lastArticlesList = array(
-            array('id' => 2, 'title' => 'Mon dernier week-end'),
-            array('id' => 4, 'title' => 'Sortie de Symfony 2.1'),
-            array('id' => 6, 'title' => 'Extentions Twig')
-        );
+        $lastArticlesList = [
+            ['id' => 3, 'title' => 'Symfony 2.7'],
+            ['id' => 4, 'title' => 'Twig'],
+            ['id' => 5, 'title' => 'HTML5'],
+            ['id' => 6, 'title' => 'ECMA Script'],
+            ['id' => 7, 'title' => 'VueJs'],
+            ['id' => 8, 'title' => 'Angular']
+        ];
 
-        // return new Response('testor');
-
-        return $this->render('blog/menu.html.twig', array('list'=> $lastArticlesList));
+        return $this->render('blog/menu.html.twig', ['list'=> $lastArticlesList]);
     }
 
     public function viewAction($id)
     {
-        return $this->render('SdzBlogBundle:Blog:view.html.twig', array('id' => $id));
+        $em = $this->getDoctrine()->getManager();
+        $repositoryArticle = $em->getRepository('SdzBlogBundle:Article');
+
+        $article = $repositoryArticle->find($id);
+        // dump($article->getImage()->getUrl()); LAZY LOADING
+
+        if (null === $article) {
+            throw $this->createNotFoundException('Article[id='.$id.'] inexistant');
+        }
+
+        // On récupère les commentaires associés à l'article
+        $repositoryCommentaire = $em->getRepository('SdzBlogBundle:Commentaire');
+        // $commentaires = $repositoryCommentaire->findByArticle($article);
+        $commentaires = $repositoryCommentaire->findByArticle($article->getId());
+
+        // On récupère les compétences liées à l'article
+        $article_competences = $em->getRepository('SdzBlogBundle:ArticleCompetence')->findByArticle($article->getId());
+        // dump($article_competences);die();
+        
+
+        return $this->render('SdzBlogBundle:Blog:view.html.twig', [
+            'article' => $article, 
+            'commentaires' => $commentaires,
+            'article_competences' => $article_competences
+        ]);
     }
 
     public function addAction()
     {
+        // Ajouter un article...
+        $article = new Article();
+        $article->setTitle('Relation ManyToOne')
+                ->setAuthor('Mek')
+                ->setContent('L\'entité Commentaire est Propriétaire alors que l\'entité Article est dîte Inverse.');
+
+        // Lier une image à un article...
+        $image = new Image();
+        $image->setUrl('img/photo.png')
+              ->setAlt('image');
+
+        $article->setImage($image);
+
+        // Lier des commentaires à un article
+        $comment1 = new Commentaire();
+        $comment1->setAuthor('IbnMek')
+                 ->setContent('On peut ajouter des commentaires')
+                 ->setArticle($article); 
+        $comment2 = new Commentaire();
+        $comment2->setAuthor('IbnAbass')
+                 ->setContent('On peut vraiment ajouter des commentaires')
+                 ->setArticle($article); 
+
+        $em = $this->getDoctrine()->getManager();
+
+        // Petite mise à jour
+        // $article2 = $em->getRepository('SdzBlogBundle:Article')->find(1);
+        // $article2->setContent('Al hamdoulillah 3ala Kouli \'hal');
+
+        // Lier les catégories
+        $categories = $em->getRepository('SdzBlogBundle:Categorie')->findAll();
+        foreach ($categories as $categorie) {
+            $article->addCategory($categorie);
+        }
+
+        $em->persist($article);
+        $em->persist($comment1);
+        $em->persist($comment2);
+
+        // Les compétences
+        // Récup depuis le DB
+        $competences = $em->getRepository('SdzBlogBundle:Competence')->findAll();
+        foreach ($competences as $key => $competence) {
+            $articleCompetence[$key] = new ArticleCompetence();
+            $articleCompetence[$key]->setArticle($article)
+                                    ->setCompetence($competence)
+                                    ->setLevel('Intermédiaire');
+            $em->persist($articleCompetence[$key]);
+        }
+
+        $em->flush();
+
         if ($this->get('request')->getMethod() == 'POST') {
             // Traitement du formulaire, persister les datas en base
             // Message flash
             $this->get('session')->getFlashBag()->add('notice', 'Article bien enregistré');
             // Redirection vers la page de visualisation de l'article
-            return $this->redirect($this->generateUrl('sdz_blog_view', array('id' => 19)));
+            return $this->redirect($this->generateUrl('sdz_blog_view', ['id' => $article->getId()]));
         }
 
         // Affichage du formulaire d'ajout d'article
@@ -164,12 +137,15 @@ class BlogController extends Controller
 
     public function editAction($id)
     {
-        return $this->render('SdzBlogBundle:Blog:edit.html.twig', array('id' => $id));
+        // Récupération de l'article d'id = $id
+        // Création et gestion du formulaire
+
+        return $this->render('SdzBlogBundle:Blog:edit.html.twig', ['id' => $id]);
     }
 
     public function removeAction($id)
     {
-        return $this->render('SdzBlogBundle:Blog:remove.html.twig', array('id' => $id));
+        return $this->render('SdzBlogBundle:Blog:remove.html.twig', ['id' => $id]);
     }
 
 }
