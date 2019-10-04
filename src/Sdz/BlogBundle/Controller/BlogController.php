@@ -22,6 +22,23 @@ class BlogController extends Controller
         $em = $this->getDoctrine()->getManager();
         $repository = $em->getRepository('SdzBlogBundle:Article');
         $articles = $repository->findAll();
+
+        // $art = $repository->findBy(
+        //     array('author' => 'Mek'),
+        //     array('date' => 'desc'),
+        //     1,
+        //     0
+        // );
+        // dump($art);die();
+
+        // $art = $repository->findOneBy(
+        //     array('author' => 'Mek')
+        // );
+        // dump($art);die();
+
+        // Query Builder
+        $art = $repository->myFindAll();
+        dump($art);die();
         
         return $this->render('SdzBlogBundle:Blog:index.html.twig', ['articles' => $articles]);
     }
@@ -73,9 +90,9 @@ class BlogController extends Controller
     {
         // Ajouter un article...
         $article = new Article();
-        $article->setTitle('Relation ManyToOne')
+        $article->setTitle('Relation Bidirectionnelle')
                 ->setAuthor('Mek')
-                ->setContent('L\'entité Commentaire est Propriétaire alors que l\'entité Article est dîte Inverse.');
+                ->setContent('L\'entité Commentaire est Propriétaire alors que l\'entité Article est dîte Inverse. Leur relation est bidirectionnelle.');
 
         // Lier une image à un article...
         $image = new Image();
@@ -87,11 +104,11 @@ class BlogController extends Controller
         // Lier des commentaires à un article
         $comment1 = new Commentaire();
         $comment1->setAuthor('IbnMek')
-                 ->setContent('On peut ajouter des commentaires')
+                 ->setContent('On peut maintenant faire un $article->getCommentaire() !')
                  ->setArticle($article); 
         $comment2 = new Commentaire();
         $comment2->setAuthor('IbnAbass')
-                 ->setContent('On peut vraiment ajouter des commentaires')
+                 ->setContent('On peut toujours faire un $commentaire->getArticle() !')
                  ->setArticle($article); 
 
         $em = $this->getDoctrine()->getManager();

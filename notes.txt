@@ -155,6 +155,8 @@ NB: $article->getCommentaires() implique une requête SQL
 			"vendor/package": "^0.3.2", // >=0.3.2 <0.4.0 // except if major version is 0
 		}
 
+		[ symfony-composer-erreur-memoire-allouee (recherche google) ]
+
 		Erreur mémoire allouée composer
 			-> php -r "eval('?>'.file_get_contents('http://getcomposer.org/installer'));" Réinstallation
 
@@ -181,6 +183,133 @@ NB: $article->getCommentaires() implique une requête SQL
 	
 	Utilisation des fixtures pour alimenter la table Competence
 	Idem que Categorie, création du Fichier Competences.php ds répertoire DataFixtures\ORM
+
+	5) Relation bidirectionnelle
+
+	On reprend la relation Article Commentaire
+	Au départ la relation est unidirectionnelle, entité propriétaire Commentaire et entité inverse Article
+	La relation est du type ManyToOne (Many du côté propriétaire).
+
+	Pour la rendre bidirectionnelle, il ajouter un attribut commentaires (pluriel, il y a en effet plusieurs commentaires possibles) à l'entité inverse Article.
+	Il faut lui ajouter aussi l'annotation @ORM\OneToMany(targetEntity="Sdz\BlogBundle\Entity\Commentaire"),mappedBy="article".
+	Du côté de l'entité propriétaire, il faut ajouter inversedBy="commentaires", correspond au symétrique de mappedBy="article".
+
+	*********************************************
+	*** Récupérer les entités avec Doctrine 2 ***
+	*********************************************
+
+	Un repository par entité, permet de bien organiser le code.
+	Dans un repository, il existe 2 moyens de récupérer les données:
+		- Le DQL 
+			SELECT a FROM SdzBlogBundle:Article a
+		- Le QueryBuilder
+			querybuilder = qb
+			$qb->select('a')->from('SdzBlogBundle:Article', 'a');
+			Nb: Principal avantage est de pouvoir construire la requête en plusieurs fois
+	
+	Les repositories héritent de la classe Doctrine\ORM\EntityRepository qui propose quelques méthodes:
+		- les méthodes normales
+			+ find($id) : retourne l'entité d'id $id
+			+ findAll() : retourne liste d'entités
+			+ findBy(array $criteres, array $orderBy=null, $limite=null, $offset=null) : retourne liste d'entités (nb = $limite et borne inférieure du range $offset)
+			+ findOneBy(array $criteres) : retourne une entité
+		- les méthodes magiques
+			+ findByX($valeur) : liste entités
+			+ findOneByX($valeur) : une entité
+	Les méthodes de récupération personnelles
+		QB: cf repo article
+
+	La query :
+		- $entities = $qb->getQuery()->getResult()
+			Tableau d'objets
+		- ...getArrayResult()
+			Tableu de tableaux (plus rapide, juste pour l'affichage)
+		- ...getScalarResult()
+		- ...getOneOrNullResult()
+		- ...getSingleResult()
+		- ...getSingleScalarResult()
+		- ...execute() : toutes les autres méthodes sont en fait des raccourcis vers cette méthode, en changeant la méthode d'hydratation des résultats. On l'utilise essentiellement pour des requêtes qui ne requièrent pas de résultats (Update, insert ...)
+
+	Utilisation du DQL : 
+		- en ligne de commande : 
+			+ php app/console doctrine:query:dql "SELECT a FROM SdzBlogBundle:Article a"
+			+ ... "SELECT a FROM Article a WHERE TRIM(a.author) = 'mek'"
+			+ ... "SELECT a.titre FROM Article a WHERE a.id IN (10,11,12)
+				[a.title entraine un résultat sous forme de tableaux et non de'objets]
+		- On peut utiliser des paramètres via une fonction
+			public function myFindDql($id) {
+				// propriété _em de l'entityManager
+				$sql = "SELECT a FROM SdzBlogBundle:Article a WHERE a.id = :id";
+				$query = $this->_em->createQuery($sql);
+				$query->setParameter('id', $id);
+				// La requête ne doit renvoyer qu'un seul résultat
+				return $query->getSingleResult();
+			}
+
+		Les jointures :
+			- Avec le QueryBuilder:
+				public function getArticlesWithCommentaires() {
+					$qb = $this->createQueryBuilder('a');
+							   ->leftJoin('a.commentaires', 'c')
+							   ->addSelect('c');
+					return $qb->getQuery()->getResult();  	
+				}
+				// On peut ajouter des conditions à la suite du on... avec la syntaxe du WITH
+				$qb->Join('a.commentaires', 'c', 'WITH', 'YEAR(c.date) > 2011');
+			- SQL\DQL
+				SELECT * FROM Article a JOIN Commentaire c ON c.article = a.id AND YEAR(c.date) > 2011
+				En DQL le ON n'existe pas seul le WITH est supporté !!!
+				Grâce au With on a pas besoin de réécrire la condition de jointure le c.article = a.id ?????
+
+		NB: Il est indispensable de faire les bonnes jointures afin de limiter au maximum le nombre de requêtes sur les pages
+
+		
+		Les Evénements et Extensions Doctrine
+
+			1) Les événements Doctrine
+				Ce sont les événements de cycle de vie car il s'agit d'événements que Doctrine lève à chaque moment de la vie d'une entité.
+				Callbacks du cycle de vie (lifecycle) d'une entité.
+				Ex : $dateEdition -> date de la dernière édition d'un article
+				Crééer la propriété
+				Dire à Doctrine que notre entité contient des Callbacks -> annotation [HasLifecycleCallbacks()]
+				Mais auusi créér une methode updateDate() avec l'annotation @ORM\PreUpdate
+
+				Liste des Evénements:
+					- PrePersist et PostPersist
+					- PreUpdate et PostUpdate
+					- PreRemove et PostRemove
+					- PostLoad
+
+			2) Les extensions Doctrine
+				La communauté a créé bon nombre d'extension réutilisable
+				Philosophie DRY
+				un bundle en particulier permet d'intégrer différentes extensions Doctrine dans un projet Symfony 2 -> StofDoctrineExtensionBundle
+				composer [stof/doctrine-extensions-bundle V1.2.2]  php -d memory_limit=-1 composer.phar update
+				Ne pas oublier de l'ajouter au niveau de app/AppKernel.php
+				Ce bundle va permettre l'Utilisation des extensions.
+
+				On va activer l'extension Sluggable
+				Pour cela on va configurer le bundle précédent via le fichier app/config/config.yml
+				Ensuite ajouter une propriété slug à notre entité (ex Article) avec les annotations
+				suivantes:
+				/** 
+				 * @Gedmo\Slug(fields={"titre"}) 
+				 * @ORM\Column(length=128, unique=true) 
+				 */
+
+				 Ne pas oublier le use Gedmo\Mapping\Annotation as Gedmo;
+
+
+
+
+		
+		Pratique : refactoriser les entités du Blog
+
+
+
+
+
+
 
 
 	

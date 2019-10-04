@@ -3,12 +3,14 @@
 namespace Sdz\BlogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * Article
  *
  * @ORM\Table(name="sdz_article")
  * @ORM\Entity(repositoryClass="Sdz\BlogBundle\Entity\ArticleRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Article
 {
@@ -67,6 +69,26 @@ class Article
      * @ORM\ManyToMany(targetEntity="Sdz\BlogBundle\Entity\Categorie", cascade={"persist"})
      */
     private $categories;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Sdz\BlogBundle\Entity\Commentaire", mappedBy="article")
+     */
+    private $commentaires;
+
+    /**
+     * @var \DateTime $dateEdition
+     * 
+     * @ORM\Column(name="date_edition", type="datetime", nullable=true)
+     */
+    private $dateEdition;
+
+    /** 
+     * @var string 
+     * 
+     * @Gedmo\Slug(fields={"title"}) 
+     * @ORM\Column(length=128, unique=true) 
+     */
+    private $slug;
 
     /**
      * Constructeur
@@ -265,5 +287,74 @@ class Article
     public function getCategories()
     {
         return $this->categories;
+    }
+
+    /**
+     * Add commentaire
+     *
+     * @param \Sdz\BlogBundle\Entity\Commentaire $commentaire
+     *
+     * @return Article
+     */
+    public function addCommentaire(\Sdz\BlogBundle\Entity\Commentaire $commentaire)
+    {
+        $this->commentaires[] = $commentaire;
+
+        // Découle du cadre bidirectionnelle de la relation
+        // Pour garder la cohérence il faut aussi setter l'article dans l'objet Commentaire
+        $commentaire->setArticle($this);
+
+        return $this;
+    }
+
+    /**
+     * Remove commentaire
+     *
+     * @param \Sdz\BlogBundle\Entity\Commentaire $commentaire
+     */
+    public function removeCommentaire(\Sdz\BlogBundle\Entity\Commentaire $commentaire)
+    {
+        $this->commentaires->removeElement($commentaire);
+    }
+
+    /**
+     * Get commentaires
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCommentaires()
+    {
+        return $this->commentaires;
+    }
+
+    /**
+     * Set dateEdition
+     *
+     * @param \DateTime $dateEdition
+     *
+     * @return Article
+     */
+    public function setDateEdition($dateEdition)
+    {
+        $this->dateEdition = $dateEdition;
+
+        return $this;
+    }
+
+    /**
+     * Get dateEdition
+     *
+     * @return \DateTime
+     */
+    public function getDateEdition()
+    {
+        return $this->dateEdition;
+    }
+
+    /**
+     * @ORM\PreUpdate
+     */
+    public function updateDate() {
+        $this->setDateEdition(new \Datetime());
     }
 }

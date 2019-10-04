@@ -10,8 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="sdz_commentaire")
  * @ORM\Entity(repositoryClass="Sdz\BlogBundle\Entity\CommentaireRepository")
  */
-class Commentaire {
-
+class Commentaire 
+{
     /**
      * @var integer $id
      * 
@@ -45,15 +45,15 @@ class Commentaire {
     /**
      * @var Sdz\BlogBundle\Entity\Article $article
      * 
-     * @ORM\ManyToOne(targetEntity="Sdz\BlogBundle\Entity\Article")
+     * @ORM\ManyToOne(targetEntity="Sdz\BlogBundle\Entity\Article", inversedBy="commentaires")
      * @ORM\JoinColumn(nullable=false)
      */
     private $article;
 
-    public function __construct() {
+    public function __construct() 
+    {
         $this->date = new \DateTime();
     }
-
 
     /**
      * Get id

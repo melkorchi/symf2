@@ -10,4 +10,68 @@ namespace Sdz\BlogBundle\Entity;
  */
 class ArticleRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function myFindAll()
+    {
+        // $qb = $this->createQueryBuilder('a');
+        // $query = $qb->getQuery();
+        // $resultats = $query->getResult();
+
+        // return $resultats;
+
+        return $this->createQueryBuilder('a')->getQuery()->getResult();
+    }
+
+    public function myFindOne($id)
+    {
+        $qb = $this->_em->createQueryBuilder(); // $qb vide
+        $qb->select('a')
+           ->from('SdzBlogBundle:Article', 'a')
+           ->where('a.id = :id')
+           ->setParameter('id', $id);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findByAuthorAndDate($author, $annee)
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb->where('a.author = :author')
+           ->setParameter('author', $author)
+           ->andWhere('a.date < :annee')
+           ->setParameter('annee', $annee)
+           ->orderBy('a.date', 'DESC');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    // Articles postés durant l'année en cours
+    public function whereCurrentYear(\Doctrine\ORM\QueryBuilder $qb)
+    {
+        $qb->andWhere('a.date BETWEEN :start AND :end')
+           ->setParameter('start', new \Datetime(date('Y').'-01-01'))
+           ->setParameter('end', new \Datetime(date('Y').'-12-31'));
+
+        return $qb;
+    }
+
+    public function findByAuthorCurrentYear($author)
+    {
+        $qb =$this->createQueryBuilder('a');
+        $qb->where('a.author = :author')
+           ->setParameter('author', $author);
+
+        $qb = $this->whereCurrentYear($qb);
+
+        $qb->orderBy('a.date', 'DESC');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function getArticlesWithCategories(array $categorieNames) {
+        $qb = $this->createQueryBuilder('a');
+        $qb->join('a.categories', 'c')
+           ->andWhere($qb->exp()->in('c.name', $categorieNames)); // Permet de filtrer sur les noms des catégories
+
+        return $qb->getQuery()->getResult();
+    }
 }
